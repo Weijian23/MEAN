@@ -1,0 +1,17 @@
+<mat-card>
+  <form (submit)="onAddPost(postForm)" #postForm="ngForm">
+    <mat-form-field>
+      <!-- <input matInput type="text" [(ngModel)]="enteredTitle"> -->
+      <input matInput type="text" name="title" ngModel required #referenceToTitle="ngModel" placeholder="Title">
+      <mat-error *ngIf="referenceToTitle.invalid">Please enter a titile</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <textarea matInput rows="6" name="content" ngModel required #referenceToContent="ngModel"
+        placeholder="Content"></textarea>
+      <mat-error *ngIf="referenceToContent.invalid">Please enter a content</mat-error>
+    </mat-form-field>
+    <!-- <button mat-raised-button color="primary" (click)="onAddPost()">Save Post</button> -->
+    <button mat-raised-button color="primary" type="submit">Save Post</button>
+
+  </form>
+</mat-card>
