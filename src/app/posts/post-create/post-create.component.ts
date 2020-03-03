@@ -9,10 +9,10 @@ import { PostsService } from '../posts.service';
 })
 
 @Injectable({ providedIn: 'root' })
-export class PostCreateComponent implements OnInit {
-  ngOnInit(): void {
-    throw new Error("Method not implemented.");
-  }
+export class PostCreateComponent {
+  // ngOnInit(): void {
+  //   throw new Error("Method not implemented.");
+  // }
 
   constructor(public postsService: PostsService) { }
 
