@@ -16,6 +16,8 @@ import { PostCreateComponent } from "./posts/post-create/post-create.component";
 import { HeaderComponent } from "./header/header.component";
 import { PostListComponent } from "./posts/post-list/post-list.component"
 import { AppRutingModule } from './app-routing.module';
+import { Logincomponent } from './auth/login/login.component';
+import { SignupComponent } from './auth/signup/signup.component';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { AppRutingModule } from './app-routing.module';
     AppComponent,
     PostCreateComponent,
     HeaderComponent,
-    PostListComponent
+    PostListComponent,
+    Logincomponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,
