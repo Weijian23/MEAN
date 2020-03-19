@@ -2,6 +2,7 @@ const express = require("express");
 const Post = require('../models/post');
 const multer = require("multer");
 
+const checkAuth = require("../middleware/check-auth");
 const router = express.Router();
 
 const MIME_TYPE_MAP = {
@@ -26,28 +27,31 @@ const multerStorageConfig = multer.diskStorage({
   }
 });
 
-router.post("", multer({ storage: multerStorageConfig }).single("image"), (req, res, next) => {
-  const url = req.protocol + "://" + req.get("host");
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-    imagePath: url + "/images/" + req.file.filename
-  });
-  post.save()
-    .then((createdpost) => {
-      res.status(201).json({
-        message: "Post added successfully",
-        // postId: createdpost._id
-        post: {
-          id: createdpost._id,
-          title: createdpost.title,
-          content: createdpost.content,
-          imagePath: createdpost.imagePath
-        }
-      });
+router.post(
+  "",
+  checkAuth,
+  multer({ storage: multerStorageConfig }).single("image"), (req, res, next) => {
+    const url = req.protocol + "://" + req.get("host");
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: url + "/images/" + req.file.filename
     });
+    post.save()
+      .then((createdpost) => {
+        res.status(201).json({
+          message: "Post added successfully",
+          // postId: createdpost._id
+          post: {
+            id: createdpost._id,
+            title: createdpost.title,
+            content: createdpost.content,
+            imagePath: createdpost.imagePath
+          }
+        });
+      });
 
-});
+  });
 
 router.get('', (req, res, next) => {
   // console.log(req.query);
@@ -75,25 +79,28 @@ router.get('', (req, res, next) => {
     });
 });
 
-router.put('/:id', multer({ storage: multerStorageConfig }).single("image"), (req, res, next) => {
-  let imagePath = req.body.imagePath;
-  if (req.file) {
-    const url = req.protocol + "://" + req.get("host");
-    imagePath = url + "/images/" + req.file.filename;
-  }
-  const post = new Post({
-    _id: req.body.id,
-    title: req.body.title,
-    content: req.body.content,
-    imagePath: imagePath
+router.put(
+  '/:id',
+  checkAuth,
+  multer({ storage: multerStorageConfig }).single("image"), (req, res, next) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      imagePath = url + "/images/" + req.file.filename;
+    }
+    const post = new Post({
+      _id: req.body.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath
+    });
+    console.log(post);
+    Post.updateOne({ _id: req.params.id }, post)
+      .then((result) => {
+        // console.log("edit post: " + result);
+        res.status(200).json({ message: 'update successful.' });
+      })
   });
-  console.log(post);
-  Post.updateOne({ _id: req.params.id }, post)
-    .then((result) => {
-      // console.log("edit post: " + result);
-      res.status(200).json({ message: 'update successful.' });
-    })
-});
 
 router.get('/:id', (req, res, next) => {
   Post.findById(req.params.id)
@@ -106,7 +113,7 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", checkAuth, (req, res, next) => {
   console.log(req.params.id);
   Post.deleteOne({ _id: req.params.id })
     .then((result) => {
