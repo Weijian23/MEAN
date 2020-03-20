@@ -1,9 +1,11 @@
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Component, OnInit, Injectable, OnDestroy } from '@angular/core';
 import { NgForm, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../posts.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Post } from '../post.model';
 import { mimeType } from "./mime-type.validator";
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-post-create',
@@ -12,7 +14,7 @@ import { mimeType } from "./mime-type.validator";
 })
 
 @Injectable({ providedIn: 'root' })
-// used by template friven approach
+// used by template driven approach
 // export class PostCreateComponent implements OnInit {
 //   enteredContent = '';
 //   enteredTitle = '';
@@ -60,7 +62,7 @@ import { mimeType } from "./mime-type.validator";
 // }
 
 // raactive approach
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit, OnDestroy {
   myform: FormGroup;
   enteredContent = '';
   enteredTitle = '';
@@ -69,11 +71,17 @@ export class PostCreateComponent implements OnInit {
   post: Post;
   isLoading = false;
   imagePreview: string;
+  private authStatusSub: Subscription;
 
 
-  constructor(public postsService: PostsService, public route: ActivatedRoute) { }
+  constructor(public postsService: PostsService, public route: ActivatedRoute, private authService: AuthService) { }
 
   ngOnInit() {
+    this.authStatusSub = this.authService.getAuthStatusListener()
+      .subscribe(authStatus => {
+        this.isLoading = false;
+      }
+      );
     this.myform = new FormGroup({
       'title': new FormControl(
         null,
@@ -99,7 +107,8 @@ export class PostCreateComponent implements OnInit {
             id: postData._id,
             title: postData.title,
             content: postData.content,
-            imagePath: postData.imagePath
+            imagePath: postData.imagePath,
+            creator: postData.creator
           };
           this.myform.setValue({
             'title': this.post.title,
@@ -147,6 +156,10 @@ export class PostCreateComponent implements OnInit {
     }
 
     this.myform.reset();
+  }
+
+  ngOnDestroy() {
+    this.authStatusSub.unsubscribe();
   }
 
 }

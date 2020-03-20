@@ -22,7 +22,7 @@ router.post("/signup", (req, res, next) => {
         })
         .catch(err => {
           res.status(500).json({
-            error: err
+            message: "Invalid authentication credentials."
           });
         });
     });
@@ -39,13 +39,14 @@ router.post("/login", (req, res, next) => {
         });
       }
       fetchedUser = user;
+      console.log("223   ", fetchedUser);
       return bcrypt.compare(req.body.password, user.password);
     })
     .then(result => {
       // console.log(result);
       if (!result) {
         return res.status(401).json({
-          message: "Auth failed"
+          message: "Invalid authentication credentials."
         });
       }
       const token = jwt.sign(
@@ -59,7 +60,8 @@ router.post("/login", (req, res, next) => {
       console.log(token);
       res.status(200).json({
         token: token,
-        expiresIn: 3600
+        expiresIn: 3600,
+        userId: fetchedUser._id
       });
     })
     .catch(err => {
