@@ -40,6 +40,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.userId = this.authService.getUserId();
+    // this.postsService.getPostsByCreator(this.postsPerPage, this.currentPage, this.userId);
     this.postsSub = this.postsService.getPostUpdatedListener().
       subscribe((postData: { posts: Post[], postCount: number }) => {
         this.isLoading = false;
@@ -49,6 +50,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.userIsAuthenticated = this.authService.getIsAuth();
     this.authStatusSub = this.authService.getAuthStatusListener()
       .subscribe(isAuthenticated => {
+        this.isLoading = false;
         this.userIsAuthenticated = isAuthenticated;
         this.userId = this.authService.getUserId();
       });

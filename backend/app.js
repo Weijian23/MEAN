@@ -1,4 +1,4 @@
-// ixFgz3vVCx8ScR2o
+// bGGe4K8d0sUxiha3
 
 const express = require('express');
 const bodyParser = require("body-parser");
@@ -10,12 +10,12 @@ const userRoutes = require("./routes/user");
 
 const app = express();
 
-mongoose.connect("mongodb+srv://weijian:ixFgz3vVCx8ScR2o@mean2020-lnydh.mongodb.net/angular-node-test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect("mongodb+srv://weijian:bGGe4K8d0sUxiha3@mean2020-lnydh.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("connected to database.")
   })
-  .catch(() => {
-
+  .catch((error) => {
+    // console.log(error);
   });
 
 app.use(bodyParser.json());

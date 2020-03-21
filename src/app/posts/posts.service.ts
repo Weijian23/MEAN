@@ -40,6 +40,38 @@ export class PostsService {
       });
   }
 
+  getPostsByCreator(postsPerPage: number, currentPage: number, userId: string) {
+    if (!userId) {
+      return;
+    }
+    console.log("runing get post be creator.")
+    const qureyParams = `?pagesize=${postsPerPage}&page=${currentPage}&userId=${userId}`;
+    this.http.get<{ message: string, posts: any, maxPosts: number }>("http://localhost:3000/api/posts" + qureyParams)
+      .pipe(map((postData) => {
+        return {
+          posts: postData.posts.map((post) => {
+            return {
+              title: post.title,
+              content: post.content,
+              id: post._id,
+              imagePath: post.imagePath,
+              creator: post.creator
+            };
+          }),
+          maxPosts: postData.maxPosts
+        };
+      })
+      )
+      .subscribe((transformedPostsData) => {
+        // console.log(transformedPostsData);
+        this.posts = transformedPostsData.posts;
+        this.postUpdated.next({
+          posts: [...this.posts],
+          postCount: transformedPostsData.maxPosts
+        });
+      });
+  }
+
   getPostUpdatedListener() {
     return this.postUpdated.asObservable();
   }

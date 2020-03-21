@@ -80,8 +80,7 @@ export class PostCreateComponent implements OnInit, OnDestroy {
     this.authStatusSub = this.authService.getAuthStatusListener()
       .subscribe(authStatus => {
         this.isLoading = false;
-      }
-      );
+      });
     this.myform = new FormGroup({
       'title': new FormControl(
         null,
